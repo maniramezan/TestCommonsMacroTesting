@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    container: swift:6.2.4-noble
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Pin oldest supported SwiftSyntax
+        run: swift package resolve swift-syntax --version 600.0.1
+      - run: swift format lint --strict --recursive Package.swift Sources Tests
+      - run: swift build
+      - run: swift test
